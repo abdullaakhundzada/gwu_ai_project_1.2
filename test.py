@@ -1,22 +1,27 @@
 import unittest
 from algorithms import water_pitcher_solver  # Assuming you saved as water_pitcher_astar.py
+from utils import read_input_file
+import os
+
+project_path = os.path.dirname(os.path.realpath(__file__))
+data_path    = os.path.join(project_path, "data")
 
 class TestWaterPitcherAStar(unittest.TestCase):
 
     def test_input1(self):
-        capacities, target = [2, 5, 6, 72], 143             # contents of input1.txt
+        capacities, target = read_input_file(os.path.join(data_path, "input1.txt"))
         self.assertEqual(water_pitcher_solver(capacities, target), 4) 
 
     def test_input2(self):
-        capacities, target = [3, 6], 2                      # contents of input2.txt
+        capacities, target = read_input_file(os.path.join(data_path, "input2.txt"))
         self.assertEqual(water_pitcher_solver(capacities, target), -1) 
 
     def test_input3(self):
-        capacities, target = [2], 143                       # contents of input3.txt
+        capacities, target = read_input_file(os.path.join(data_path, "input3.txt"))
         self.assertEqual(water_pitcher_solver(capacities, target), -1) 
 
     def test_input4(self):
-        capacities, target = [2, 3, 5, 19, 121, 852], 11443 # contents of input4.txt
+        capacities, target = read_input_file(os.path.join(data_path, "input4.txt"))
         self.assertEqual(water_pitcher_solver(capacities, target), 18) 
 
     def test_no_capacity_target_zero(self):
