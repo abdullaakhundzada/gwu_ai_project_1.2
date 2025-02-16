@@ -5,7 +5,7 @@ from utils import read_input_file
 parser = ArgumentParser()
 
 parser.add_argument("--input_file", type=str, default="data/input4.txt", 
-                    help="The path to the input file containing the pater pitcher information and the target quantity.")
+                    help="The path to the input file containing the water pitcher information and the target quantity.")
 
 parser.add_argument("--bounding_coefficient", type=int, default=2, 
                     help="A coefficient to determine the boundary of the overshoot while stepping towards the final value. The maximum allowed overshoot equals to `max_pitcher_size * bounding_coefficient`, hence, the amount of water cannot pass `target_quantity + max_pitcher_size * bounding_coefficient`, making it more aligned with real-world situation")
