@@ -4,7 +4,7 @@ import heapq
 def heuristic(capacities : list[int], current_amount : int, target : int) -> int:
     """
     Calculates the theoretical and approximate minimum number of steps required for reaching the target.
-    
+
     Args:
         capacities : list[int]
             Capacities of the pitchers.
@@ -12,7 +12,7 @@ def heuristic(capacities : list[int], current_amount : int, target : int) -> int
             The current amount of water in the destination.
         target : int
             The desired quantity of water in the destination.
-    
+
     Returns:
         int : the number of steps required to reach or surpass the target by only using the largest pitcher.
     """
@@ -23,10 +23,10 @@ def heuristic(capacities : list[int], current_amount : int, target : int) -> int
 
     error     = abs(target - current_amount)
     min_steps = ceil(error / max_capacity)
-    
+
     return min_steps
 
-def water_pitcher_solver(capacities : list[int], target : int, bounding_coefficient : int = 2) -> int:
+def water_pitcher_solver(capacities : list[int], target : int, bounding_coefficient : int = 2, verbose : bool = False) -> int:
     """
     Solves the water pitcher problem using A* algorithm.
 
@@ -35,9 +35,11 @@ def water_pitcher_solver(capacities : list[int], target : int, bounding_coeffici
             Capacities of the pitchers.
         target : int
             The target quantity in the destination.
-        bounding_coefficient : int
-            Prevents the model from running too far away from the target. 
+        bounding_coefficient : int (optional)
+            Prevents the model from running too far away from the target. Default to 2.
             Used as the multiplying factor for the `overshoot = max_pitcher * bounding_coefficient`
+        verbose : bool (optional)
+            If True, prints step-by-step information during the search. Defaults to False.
 
     Returns:
         The minimum number of steps to reach the target, or -1 if no path exists.
@@ -63,8 +65,8 @@ def water_pitcher_solver(capacities : list[int], target : int, bounding_coeffici
         heuristic(capacities, start_state, target),  # f_score
         0,                                           # g_score
         start_state                                  # state
-        )]  
-    
+        )]
+
     visited = set()
     visited.add(start_state)
 
@@ -74,6 +76,8 @@ def water_pitcher_solver(capacities : list[int], target : int, bounding_coeffici
 
         # reached the goal
         if current_state == target:
+            if verbose:
+                print(f"Reached target: {target} in {g_score} steps.")
             return g_score
 
          # Check whether there existis a path possible from here according to heuristic
@@ -88,29 +92,36 @@ def water_pitcher_solver(capacities : list[int], target : int, bounding_coeffici
             if next_state_sub not in visited:
 
                 visited.add(next_state_sub)
-                new_g_score = g_score + 1 # as we have decided to take a step forward, the current amount of steps increases by 1 
+                new_g_score = g_score + 1 # as we have decided to take a step forward, the current amount of steps increases by 1
 
                 new_h_score = heuristic(capacities, next_state_sub, target)
                 new_f_score = new_g_score + new_h_score
+
+                if verbose:
+                    print(f"Step: Pour out {capacity}.\t Prev State: {current_state},\t New State: {next_state_sub},\t g-score: {new_g_score},\t h-score: {new_h_score},\t f-score: {new_f_score}")
 
                 heapq.heappush(pq, (new_f_score, new_g_score, next_state_sub))
 
             # Pour in (add)
             next_state_add = current_state + capacity
-            
+
             # Simple bound to avoid running too far away from the target
-            if ( next_state_add > target + max_capacity * bounding_coefficient ): 
+            if ( next_state_add > target + max_capacity * bounding_coefficient ):
                continue
 
-            if next_state_add not in visited: 
-                
+            if next_state_add not in visited:
+
                 visited.add(next_state_add)
-                new_g_score = g_score + 1 # as we have decided to take a step forward, the current amount of steps increases by 1 
+                new_g_score = g_score + 1 # as we have decided to take a step forward, the current amount of steps increases by 1
 
                 new_h_score = heuristic(capacities, next_state_add, target)
                 new_f_score = new_g_score + new_h_score
 
+                if verbose:
+                    print(f"Step: Pour in  {capacity}.\t Prev State: {current_state},\t New State: {next_state_add},\t g-score: {new_g_score},\t h-score: {new_h_score},\t f-score: {new_f_score}")
+
                 heapq.heappush(pq, (new_f_score, new_g_score, next_state_add))
 
+    if verbose:
+        print(f"No path found to target: {target}")
     return -1 # default case, no path found
-
